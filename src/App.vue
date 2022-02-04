@@ -1,15 +1,19 @@
 <template>
   <div id="app">
     <main>
+      <div class="name">Hava Durumu</div>
       <div class="weather-all">
-        <div class="search-box">
+        <div
+          class="search-box"
+          :class="weather.main && weather.main.temp > 16 ? 'warm' : ''"
+        >
           <input
             type="text"
             class="search-bar"
-            placeholder="Search..."
+            placeholder="Arama..."
             v-model="query"
-            @keypress="fetchWeather"
           />
+
           <div class="weather-wrap" v-if="weather.main">
             <div class="location-box">
               <div class="location">
@@ -23,6 +27,7 @@
               <div class="weather">{{ weather.weather[0].main }}</div>
             </div>
           </div>
+          <Button :buttonClick="fetchWeather" />
         </div>
       </div>
     </main>
@@ -30,8 +35,12 @@
 </template>
 
 <script>
+import Button from "./components/Button.vue";
 export default {
   name: "App",
+  components: {
+    Button,
+  },
   data() {
     return {
       apikey: "afa2bfc1c58be6612708d71c40cb741a",
@@ -41,16 +50,14 @@ export default {
     };
   },
   methods: {
-    fetchWeather(e) {
-      if (e.key === "Enter") {
-        fetch(
-          `${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.apikey}`
-        )
-          .then((res) => {
-            return res.json();
-          })
-          .then(this.setResult);
-      }
+    fetchWeather() {
+      fetch(
+        `${this.url_base}weather?q=${this.query}&units=metric&APPID=${this.apikey}`
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then(this.setResult);
     },
     setResult(results) {
       this.weather = results;
@@ -105,18 +112,29 @@ main {
   min-height: 100vh;
   padding: 25px;
 }
+.search-box.warm {
+  background: url("./assets/warm-bg.jpeg");
+}
+.name {
+  text-align: center;
+  font-size: 20px;
+  margin: 0 0 10px 0;
+}
 .weather-all {
   border-radius: 10px;
 }
 .search-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: url("./assets/cold-bg.jpeg");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: bottom;
   transition: 0.4s;
   margin: 0 auto;
-  width: 289px;
-  height: 78vh;
+  width: 330px;
+  height: 587px;
   font-size: 14px;
   margin-bottom: 25px;
   padding: 20px;
@@ -145,7 +163,6 @@ main {
   font-size: 18px;
   font-weight: 500;
   text-align: center;
-  text-shadow: 1px 3px rgba(0, 0, 0, 0.25);
 }
 .date {
   color: rgb(39, 39, 39);
